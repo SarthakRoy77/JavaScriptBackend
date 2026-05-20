@@ -10,8 +10,10 @@
 // make our own modules to shorten our files and increase readability since every file is a
 //module in CommonJS
 
-const sayHello = (name) => {
-    console.log(`Hello There ${name}`);
+const fileVariables = require('./variables.js')
+
+function sayHello(n){
+    console.log(`Hello, ${n}`)
 }
 
-sayHello('Sarthak');
+sayHello(fileVariables.personName);
