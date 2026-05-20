@@ -10,10 +10,19 @@
 // make our own modules to shorten our files and increase readability since every file is a
 //module in CommonJS
 
-const fileVariables = require('./variables.js')
+//Remember this : When we import a module we invoke it , This is not unique this also happens in vanilla JavaScript and
+// also in ES6 Modules
+
+//Example custom - created modules
+const {personName, personAge, personSchool, gamesPlayed, items } = require('./variables.js')
 
 function sayHello(n){
     console.log(`Hello, ${n}`)
 }
 
-sayHello(fileVariables.personName);
+sayHello(personName);
+
+console.log(items);
+console.log(personSchool);
+console.log(personAge);
+console.log(gamesPlayed);
