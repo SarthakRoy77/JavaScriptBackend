@@ -42,4 +42,35 @@ console.log(firstTxt);
 
 const randomParagraph = "As she sat watching the world go by, something caught her eye. It wasn't so much its color or shape, but the way it was moving. She squinted to see if she could better understand what it was and where it was going, but it didn't help. As she continued to stare into the distance, she didn't understand why this uneasiness was building inside her body. She felt like she should get up and run. If only she could make out what it was. At that moment, she comprehended what it was and where it was heading, and she knew her life would never be the same. This paragraph has been written by JS using the built in file system module "
 
-writeFileSync('./FILE SYSTEM CONTENT/result.txt', randomParagraph);
+writeFileSync('./FILE SYSTEM CONTENT/result.txt', randomParagraph, {flag: 'a'});
+
+//HTTPS Module - is used to set up servers and API's
+// We will import the https module
+
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+    if(req.url === '/') {
+        res.end('Welcome to the Home Page');
+    }
+    if(req.url === '/about') {
+        res.end('Welcome to the about page');
+    }
+    else {
+        res.end(
+            `<h1>OOPS..</h1>
+             <p>This page hasn't been yet created. We are extremely sorry for the inconvenience
+             We will fix this issue as soon as possible and provide you with the information
+             you need - Website Managing Team</p>`
+
+            
+        )
+    }
+
+});
+
+server.listen(5000); // This is the localhost port; so if you see at localhost:5000 , this website should be available
+
+
+
+
