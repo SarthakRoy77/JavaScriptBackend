@@ -50,27 +50,18 @@ writeFileSync('./FILE SYSTEM CONTENT/result.txt', randomParagraph, {flag: 'a'});
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-    if(req.url === '/') {
+    if (req.url === '/') {
         res.end('Welcome to the Home Page');
     }
-    if(req.url === '/about') {
+    else if (req.url === '/about') { // Use else if here
         res.end('Welcome to the about page');
     }
     else {
-        res.end(
-            `<h1>OOPS..</h1>
-             <p>This page hasn't been yet created. We are extremely sorry for the inconvenience
-             We will fix this issue as soon as possible and provide you with the information
-             you need - Website Managing Team</p>`
-
-            
-        )
+        res.end(`
+            <h1>OOPS..</h1>
+            <p>This page hasn't been yet created...</p>
+        `);
     }
-
 });
 
-server.listen(5000); // This is the localhost port; so if you see at localhost:5000 , this website should be available
-
-
-
-
+server.listen(5000);
