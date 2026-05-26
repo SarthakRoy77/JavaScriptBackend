@@ -11,10 +11,15 @@
     "url": "git+https://github.com/SarthakRoy77/JavaScriptBackend.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Sarthak Roy",
   "type": "commonjs",
   "main": "built-in-module.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node npm.js",
+    "dev" : "nodemon npm.js"
+  },
+  "devDependencies": {
+    "i": "^0.3.7",
+    "nodemon": "^3.1.14"
   }
 }
