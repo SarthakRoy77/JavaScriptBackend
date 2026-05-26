@@ -23,3 +23,9 @@ console.log("I printed this just right now");
 
 //The scripts option in package.json enable us to create scripts that execute some lines of commands that can be used
 // for testing / logging outputs etc.
+
+// When we add a dependency , NPM automatically adds it into the (dev)dependencies object in package.json, however
+// when we uninstall we need to remove it from package.json manually.
+
+//package-lock.json is also a manifest file that contains information on modules and their
+//dependencies and have many other objects such as license etc.
