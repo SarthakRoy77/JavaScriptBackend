@@ -20,7 +20,18 @@ console.log("Completed the second task")
 
 console.log("First");
 setTimeout(() => {
-    console.log("Second (This one takes time)")
+    console.log("Second (This one takes time)") // This only happens when the call stack is empty until that it is put into a queue
 }, 0);
 console.log("Third");
 
+//Events - is also used heavily in Node.js and this style of programming where we listen for events, register functions and execute them
+// is known as Event - driven - programming
+
+const EventEmitter = require('events');
+const customEmitter = new EventEmitter();
+
+customEmitter.on('response', ()=> {
+    console.log("Response was received")
+})
+customEmitter.emit('response') // With this code, we are saying to the program that we have recorded a response event ,
+// and as per the code the event 'response' was recorded and the function is executed
