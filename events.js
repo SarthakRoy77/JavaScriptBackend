@@ -30,8 +30,32 @@ console.log("Third");
 const EventEmitter = require('events');
 const customEmitter = new EventEmitter();
 
-customEmitter.on('response', ()=> {
-    console.log("Response was received")
+customEmitter.on('response', (name, id)=> {
+    console.log(`Response was received for user ${name} with id ${id}`);
 })
-customEmitter.emit('response') // With this code, we are saying to the program that we have recorded a response event ,
+customEmitter.emit('response', 'john', 34) // With this code, we are saying to the program that we have recorded a response event ,
 // and as per the code the event 'response' was recorded and the function is executed
+
+// The order in emitting a response and listening for a response matters, first we need to initialize a EventEmitter to listen
+// for the event and then emit the response.
+
+// Event Emitter - HTTP Example
+
+const http = require('http');
+
+//The server is an associated class with the EventEmitter class
+
+const server = http.createServer()
+server.on('request', (req, res) => {
+    console.log("Received event..");
+    console.log("Responding");
+    res.write("Welcome to the Server..");
+    res.end(`You are currently at the Homepage`);
+    console.log("Responded")
+})
+
+server.listen(5000, ()=> {
+    console.log("The server is listening on port : 5000.. ");
+});
+
+
