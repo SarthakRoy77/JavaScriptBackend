@@ -13,3 +13,19 @@ stream.on('data', (result)=> {
 }) // The stream function when read emits the, the data/the error event and passes the result as an argument
 
 // The fs.ReadStream class extends streams.Readable, so it will only read the result.
+// In the output by default the size of a buffer will be a 64 kb, the last buffer is the remaining kb(s)
+// We can control the size of buffer by highWaterMark options e.g. createReadStream('path', {highWaterMark:90000, encoding:'utf8'})
+
+//Stream Example
+
+const http = require('http');
+const fs = require('fs');
+
+const exampleServer = http.createServer(function (req, res) {
+    const fileStream = fs.createReadStream('fileSystemContent/big_file.txt', 'utf8');
+    fileStream.on('open', () => {
+        fileStream.pipe(res);
+    })
+})
+
+exampleServer.listen(3000);
