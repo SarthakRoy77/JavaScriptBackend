@@ -1,0 +1,6 @@
+What will be covered in this course?
+
+Routing, Request & Response, Custom Middleware, CRUD Operations, Template Engines, Error Handling, 3rd Party NPM Packages
+, Controllers, Fetching from Frontend, Environment variables
+
+A static server is a server that involves the response using pre-written HTML files through a middleware.
