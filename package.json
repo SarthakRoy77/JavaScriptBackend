@@ -13,13 +13,19 @@
   "license": "ISC",
   "author": "Sarthak Roy",
   "type": "commonjs",
-  "main": "built-in-module.js",
+  "main": "/expense-tracker/app.js",
   "scripts": {
     "start": "node npm.js",
-    "dev" : "nodemon npm.js"
+    "dev": "nodemon npm.js"
+  },
+  "bin": {
+    "expense-tracker": "./expense-tracker/app.js"
   },
   "devDependencies": {
     "i": "^0.3.7",
     "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "commander": "^15.0.0"
   }
 }
