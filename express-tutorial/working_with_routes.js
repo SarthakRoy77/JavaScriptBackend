@@ -11,15 +11,20 @@ let posts = [
     {id:3, message:'Hello World 3!'},
 ];
 
-//Get all posts
+//Query String (req.query)
 app.get('/api/posts', (req, res) => {
-    res.send(posts);
+    const limit = parseInt(req.query.limit)
+    res.send(posts.filter(
+        (post) => post.id <= limit)
+    );
 });
 
-//Get the post according to id
+//Get the post according to id ( using parameters)
 app.get('/api/posts/:id', (req, res) => {
     const id = parseInt(req.params.id);
     res.send(posts.filter((post) => post.id === id))
 })
 
 app.listen(port, () => {console.log("Listening on port 8000")})
+
+

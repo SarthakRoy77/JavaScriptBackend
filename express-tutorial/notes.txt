@@ -4,3 +4,28 @@ Routing, Request & Response, Custom Middleware, CRUD Operations, Template Engine
 , Controllers, Fetching from Frontend, Environment variables
 
 A static server is a server that involves the response using pre-written HTML files through a middleware.
+
+Routes act as endpoints that define how your application responds to specific client requests.
+They map a combination of a URL path (like /users) and a standard HTTP method (like GET or POST) to a
+specific handler function that contains your backend logic.
+e.g.
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+} // Route to the homepage
+
+To add a parameter to a URL Endpoint (req.params) we need to add a prefix
+first that is ':' e.g. app.get('/api/posts/:post_id', (req, res) => {
+    const id = parseInt(req.params.post_id);
+    res.send(posts[id[);
+})
+
+A query string is the part of a URL that follows a question mark (?).
+It is used to pass additional information from a client to a server or
+web application.e.g. /api/endpoints?limit=3
+
+To access a query string (req.query) we use almost the same syntax as
+req.params i.e.
+app.get('/api/posts?limit=2', (req, res) => {
+    const limit = parseInt(req.query);
+    res.send(posts.filter((post) => post.id <= limit));
+});
