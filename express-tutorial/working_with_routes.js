@@ -66,8 +66,25 @@ app.put('/api/posts/:id', (req, res) => {
     }
 
     res.status(200).send(posts)
+});
+
+app.delete('/api/posts/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const post = posts.find((post) => post.id === id);
+
+    if (!post) {
+        res.status(404).send({msg : `The id : ${id} is not valid and cannot be found`});
+    }
+    else {
+        res.status(200).send(posts.filter((post) => post.id !== id));
+    }
+
+    res.send(posts.filter)
 })
 
-app.listen(port, () => {console.log("Listening on port 8000")})
+app.listen(port, () => {console.log("Listening on port 8000")});
+
+// The entire code is an example of Create , Read, Update, Delete API. The post method works as C, get method as R, put method as U and
+//the delete method as D.
 
 
