@@ -11,7 +11,7 @@ app.use(express.urlencoded({extended: false}));
 
 //Read Database function
 const readDatabase = () => {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 };
 
 //Write Database function
@@ -27,7 +27,7 @@ app.post('/api/blogs', (req, res) => {
     const content = req.body.content;
 
     if (!title || !author || !content) {
-        res.status(400).send({msg : "Important details are missing to create a blog; please enter them"})
+         return res.status(400).send({msg : "Important details are missing to create a blog; please enter them"})
 
     }
     let newBlog = {
@@ -41,7 +41,7 @@ app.post('/api/blogs', (req, res) => {
 
     blogs.push(newBlog);
     saveDatabase(blogs);
-    res.status(200).send(blogs);
+    res.status(201).send(blogs);
 });
 
 // Read / R in CRUD Method
@@ -49,12 +49,12 @@ app.get('/api/blogs/:id', (req, res) => {
     const blogs = readDatabase();
     const id = parseInt(req.params.id);
     if (!id || isNaN(id)) {
-        res.status(400).send({msg : "Please enter a id for the blog"});
+        return res.status(400).send({msg : "Please enter a id for the blog"});
     }
     const blog = blogs.find((blog) => blog.id === id);
 
     if (!blog) {
-        res.status(404).send({msg : `A blog with the id of ${id} was not found`});
+         return res.status(404).send({msg : `A blog with the id of ${id} was not found`});
     }
 
     res.status(200).send(blogs.filter((blog) => blog.id === id));
@@ -67,15 +67,61 @@ app.get('/api/blogs', (req, res) => {
     const blogTitle = blogs.find((blog) => blog.title === title);
 
     if (!blogTitle) {
-        res.status(404).send({msg : `A blog with the title of ${title} was not found`});
+         return res.status(404).send({msg : `A blog with the title of ${title} was not found`});
     }
 
     if (!title) {
-        res.status(400).send({msg : `Please enter a title`});
+          return res.status(400).send({msg : `Please enter a title`});
     }
 
     res.status(200).send(blogs.filter((blog) => blog.title === title));
 });
+
+//Update/U in CRUD
+app.put('/api/blogs/:id', (req, res) => {
+    let blogs = readDatabase();
+    const id = parseInt(req.params.id);
+    const content = req.body.content;
+
+    if (!content) {
+         return res.status(400).send({msg : "Please enter a content for the blog"});
+    }
+    if (!id || isNaN(id)) {
+         return res.status(400).send({msg : "Please enter a id for the blog"});
+    }
+
+    const blog = blogs.find((blog) => blog.id === id);
+
+    if (!blog) {
+         return res.status(404).send({msg : `A blog with the id of ${id} was not found`});
+    }
+
+    blog.title = content
+    blog.dateUpdatedAt = new Date().toLocaleDateString();
+    saveDatabase(blogs);
+    res.status(200).send(blogs);
+});
+
+app.delete('/api/blogs/:id', (req, res) => {
+    let blogs = readDatabase();
+    const id = parseInt(req.params.id);
+
+    if (!id || isNaN(id)) {
+        return res.status(400).send({msg : "Please enter a id for the blog"});
+    }
+
+    const blog = blogs.find((blog) => blog.id === id);
+
+    if (!blog) {
+        return res.status(404).send({msg : `A blog with the id of :${id} was not found`});
+    }
+
+    blogs = blogs.filter((blog) => blog.id !== id);
+    saveDatabase(blogs);
+    res.status(200).send(blogs);
+
+})
+
 
 
 app.listen(port, () => {console.log(`Listening on port ${port}`)});
