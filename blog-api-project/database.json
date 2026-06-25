@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "A blog about football",
+    "author": "Sarthak Roy",
+    "content": "Cristaino Ronaldo is the best footballer in the world and no one can argue about it",
+    "dateCreatedAt": "25/6/2026",
+    "dateUpdatedAt": "25/6/2026"
+  },
+  {
+    "id": 2,
+    "title": "A blog about football in parallel universe",
+    "author": "Sarthak Roy",
+    "content": "Lionel Messi is the best footballer in the world and no one can argue about it",
+    "dateCreatedAt": "25/6/2026",
+    "dateUpdatedAt": "25/6/2026"
+  },
+  {
+    "id": 3,
+    "title": "A blog about football in Brazil",
+    "author": "Sarthak Roy",
+    "content": "Neymar Jr. is the best footballer in the world and no one can argue about it",
+    "dateCreatedAt": "25/6/2026",
+    "dateUpdatedAt": "25/6/2026"
+  }
+]

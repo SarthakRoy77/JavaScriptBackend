@@ -4,6 +4,9 @@ const path = require('path')
 const port = 8000
 const filePath = path.join(__dirname, 'database.json')
 
+if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, '[]');
+}
 const app = express()
 
 //Middleware
@@ -26,10 +29,18 @@ app.post('/api/blogs', (req, res) => {
     const author = req.body.author;
     const content = req.body.content;
 
-    if (!title || !author || !content) {
-         return res.status(400).send({msg : "Important details are missing to create a blog; please enter them"})
-
+    if (!title) {
+        return res.status(400).send({msg : "Please enter a title for the blog"});
     }
+
+    if (!author) {
+        return res.status(400).send({msg : "Please enter the name of the author of the blog"});
+    }
+
+    if (!content) {
+        return res.status(400).send({msg : "Please enter a content for the blog"});
+    }
+
     let newBlog = {
         id : blogs.length + 1,
         title : title,
@@ -48,9 +59,14 @@ app.post('/api/blogs', (req, res) => {
 app.get('/api/blogs/:id', (req, res) => {
     const blogs = readDatabase();
     const id = parseInt(req.params.id);
-    if (!id || isNaN(id)) {
+    if (!id) {
         return res.status(400).send({msg : "Please enter a id for the blog"});
     }
+
+    if (!isNaN(id) || id < 0) {
+        return res.status(400).send({msg : "Please enter a valid postive id"});
+    }
+
     const blog = blogs.find((blog) => blog.id === id);
 
     if (!blog) {
@@ -86,8 +102,12 @@ app.put('/api/blogs/:id', (req, res) => {
     if (!content) {
          return res.status(400).send({msg : "Please enter a content for the blog"});
     }
-    if (!id || isNaN(id)) {
+    if (!id ) {
          return res.status(400).send({msg : "Please enter a id for the blog"});
+    }
+
+    if (!isNaN(id) || id < 0) {
+        return res.status(400).send({msg : "Please enter a valid positive id"});
     }
 
     const blog = blogs.find((blog) => blog.id === id);
@@ -106,8 +126,12 @@ app.delete('/api/blogs/:id', (req, res) => {
     let blogs = readDatabase();
     const id = parseInt(req.params.id);
 
-    if (!id || isNaN(id)) {
+    if (!id) {
         return res.status(400).send({msg : "Please enter a id for the blog"});
+    }
+
+    if (!isNaN(id) || id < 0) {
+        return res.status(400).send({msg : "Please enter a valid positive id"})
     }
 
     const blog = blogs.find((blog) => blog.id === id);
@@ -121,7 +145,6 @@ app.delete('/api/blogs/:id', (req, res) => {
     res.status(200).send(blogs);
 
 })
-
 
 
 app.listen(port, () => {console.log(`Listening on port ${port}`)});
