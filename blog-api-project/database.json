@@ -5,7 +5,8 @@
     "author": "Sarthak Roy",
     "content": "Cristaino Ronaldo is the best footballer in the world and no one can argue about it",
     "dateCreatedAt": "25/6/2026",
-    "dateUpdatedAt": "25/6/2026"
+    "dateUpdatedAt": "25/6/2026",
+    "tag": "Football"
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "author": "Sarthak Roy",
     "content": "Lionel Messi is the best footballer in the world and no one can argue about it",
     "dateCreatedAt": "25/6/2026",
-    "dateUpdatedAt": "25/6/2026"
+    "dateUpdatedAt": "25/6/2026",
+    "tag": "Parallel Universe"
   },
   {
     "id": 3,
@@ -21,6 +23,16 @@
     "author": "Sarthak Roy",
     "content": "Neymar Jr. is the best footballer in the world and no one can argue about it",
     "dateCreatedAt": "25/6/2026",
-    "dateUpdatedAt": "25/6/2026"
+    "dateUpdatedAt": "25/6/2026",
+    "tag": "Prince"
+  },
+  {
+    "id": 4,
+    "title": "About Me",
+    "author": "Sarthak Roy",
+    "content": "I am a good student. I score good marks and engage activily in classes. I also study extra books to enchance my pre-existing knowledge",
+    "dateCreatedAt": "25/6/2026",
+    "dateUpdatedAt": "25/6/2026",
+    "tag": "Studies"
   }
 ]

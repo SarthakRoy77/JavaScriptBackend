@@ -28,6 +28,7 @@ app.post('/api/blogs', (req, res) => {
     const title = req.body.title;
     const author = req.body.author;
     const content = req.body.content;
+    const tag = req.body.tag;
 
     if (!title) {
         return res.status(400).send({msg : "Please enter a title for the blog"});
@@ -41,13 +42,18 @@ app.post('/api/blogs', (req, res) => {
         return res.status(400).send({msg : "Please enter a content for the blog"});
     }
 
+    if (!tag) {
+        return res.status(400).send({msg : "Please enter a tag for the blog"});
+    }
+
     let newBlog = {
         id : blogs.length + 1,
         title : title,
         author : author,
         content: content,
         dateCreatedAt : new Date().toLocaleDateString(),
-        dateUpdatedAt : new Date().toLocaleDateString()
+        dateUpdatedAt : new Date().toLocaleDateString(),
+        tag: tag
     }
 
     blogs.push(newBlog);
@@ -79,19 +85,20 @@ app.get('/api/blogs/:id', (req, res) => {
 
 app.get('/api/blogs', (req, res) => {
     const blogs = readDatabase()
-    const title = req.query.title
-    const blogTitle = blogs.find((blog) => blog.title === title);
+    const tag = req.query.tag
 
-    if (!blogTitle) {
-         return res.status(404).send({msg : `A blog with the title of ${title} was not found`});
+    if (!blogs || blogs === []) {
+        return res.status(500).send({msg : "Sorry, the database has no data. Use POST to create a new blog"});
     }
 
-    if (!title) {
-          return res.status(400).send({msg : `Please enter a title`});
-    }
+    //Not applying error handling because of other route
+    const blog = blogs.filter((blog) => blog.tag === tag);
 
-    res.status(200).send(blogs.filter((blog) => blog.title === title));
-});
+    if (!blog) {
+        return res.status(404).send({msg : `A blog with the tag :${tag} was not found` });
+    }
+    res.status(200).send(blog);
+})
 
 //Update/U in CRUD
 app.put('/api/blogs/:id', (req, res) => {
