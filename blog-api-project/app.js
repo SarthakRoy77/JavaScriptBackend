@@ -69,7 +69,7 @@ app.get('/api/blogs/:id', (req, res) => {
         return res.status(400).send({msg : "Please enter a id for the blog"});
     }
 
-    if (!isNaN(id) || id < 0) {
+    if (isNaN(id) || id < 0) {
         return res.status(400).send({msg : "Please enter a valid postive id"});
     }
 
@@ -87,11 +87,13 @@ app.get('/api/blogs', (req, res) => {
     const blogs = readDatabase()
     const tag = req.query.tag
 
-    if (!blogs || blogs === []) {
+    if (!blogs) {
         return res.status(500).send({msg : "Sorry, the database has no data. Use POST to create a new blog"});
     }
 
-    //Not applying error handling because of other route
+    if (!tag) {
+        return res.status(400).send({msg : "Please enter a tag to find the blog"});
+    }
     const blog = blogs.filter((blog) => blog.tag === tag);
 
     if (!blog) {
@@ -113,7 +115,7 @@ app.put('/api/blogs/:id', (req, res) => {
          return res.status(400).send({msg : "Please enter a id for the blog"});
     }
 
-    if (!isNaN(id) || id < 0) {
+    if (isNaN(id) || id < 0) {
         return res.status(400).send({msg : "Please enter a valid positive id"});
     }
 
@@ -123,7 +125,7 @@ app.put('/api/blogs/:id', (req, res) => {
          return res.status(404).send({msg : `A blog with the id of ${id} was not found`});
     }
 
-    blog.title = content
+    blog.content = content
     blog.dateUpdatedAt = new Date().toLocaleDateString();
     saveDatabase(blogs);
     res.status(200).send(blogs);
@@ -137,13 +139,13 @@ app.delete('/api/blogs/:id', (req, res) => {
         return res.status(400).send({msg : "Please enter a id for the blog"});
     }
 
-    if (!isNaN(id) || id < 0) {
+    if (isNaN(id) || id < 0) {
         return res.status(400).send({msg : "Please enter a valid positive id"})
     }
 
     const blog = blogs.find((blog) => blog.id === id);
 
-    if (!blog) {
+    if (blog.length === 0) {
         return res.status(404).send({msg : `A blog with the id of :${id} was not found`});
     }
 
