@@ -1,6 +1,7 @@
 const express = require('express');
 const port = 8000
 const path = require('path');
+const logger = require('./middleware/logger.js')
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -10,6 +11,17 @@ let posts = [
     {id:2, message:'Hello World 2!'},
     {id:3, message:'Hello World 3!'},
 ];
+
+//Create a middleware function - Middleware knows the request and response of an Http Method and acts upon it according to
+//the logger function
+
+app.use(logger)
+
+/*const logger = (req, res, next) => {
+    console.log(`${req.method} ${req.protocol}//:${req.get('host')} ${req.originalUrl}`)
+    next();
+}*/
+
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({extended : false}));
