@@ -26,6 +26,7 @@
     "nodemon": "^3.1.14"
   },
   "dependencies": {
+    "colors": "^1.4.0",
     "commander": "^15.0.0",
     "express": "^5.2.1"
   }

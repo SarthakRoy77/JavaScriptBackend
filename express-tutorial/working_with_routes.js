@@ -2,6 +2,8 @@ const express = require('express');
 const port = 8000
 const path = require('path');
 const logger = require('./middleware/logger.js')
+const pageNotFound = require('./middleware/pageNotFound.js');
+const errorHandler = require('./middleware/custom_error_handler.js')
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -16,6 +18,7 @@ let posts = [
 //the logger function
 
 app.use(logger)
+app.use(express.json());
 
 /*const logger = (req, res, next) => {
     console.log(`${req.method} ${req.protocol}//:${req.get('host')} ${req.originalUrl}`)
@@ -23,35 +26,34 @@ app.use(logger)
 }*/
 
 // Body parser middleware
-app.use(express.json());
 app.use(express.urlencoded({extended : false}));
-
 //Query String (req.query)
+
 app.get('/api/posts', (req, res) => {
     const limit = parseInt(req.query.limit)
     res.send(posts.filter(
         (post) => post.id <= limit)
     );
 });
-
 app.get('/api/posts/all', (req, res) => {
     res.send(posts);
-    res.send('All posts have been responded');
 });
 
 //Get the post according to id ( using parameters)
-app.get('/api/posts/:id', (req, res) => {
+
+app.get('/api/posts/:id', (req, res, next) => {
     const id = parseInt(req.params.id);
     const post = posts.find((post) => post.id === id);
 
     if (!post) {
-        res.status(404).json(`The id: ${id} is not valid and cannot be found`);
-    } else {
-        res.status(200).send(posts.filter((post) => post.id === id))
+        const error = new Error('Not Found');
+        error.status =400
+        return next(error);
     }
+    res.status(200).send(posts.filter((post) => post.id === id))
 });
-
 //Posting data with request body data
+
 app.post('/api/posts', (req, res) => {
     const newPost = {
         id: posts.length + 1,
@@ -65,7 +67,6 @@ app.post('/api/posts', (req, res) => {
     res.send(posts);
 
 })
-
 app.put('/api/posts/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const post = posts.find((post) => post.id === id);
@@ -85,7 +86,7 @@ app.delete('/api/posts/:id', (req, res) => {
     const post = posts.find((post) => post.id === id);
 
     if (!post) {
-        res.status(404).send({msg : `The id : ${id} is not valid and cannot be found`});
+        return res.status(404).send({msg : `The id : ${id} is not valid and cannot be found`});
     }
     else {
         res.status(200).send(posts.filter((post) => post.id !== id));
@@ -94,9 +95,12 @@ app.delete('/api/posts/:id', (req, res) => {
     res.send(posts.filter)
 })
 
+app.use(pageNotFound);
+app.use(errorHandler);
+
 app.listen(port, () => {console.log("Listening on port 8000")});
 
 // The entire code is an example of Create , Read, Update, Delete API. The post method works as C, get method as R, put method as U and
+
+
 //the delete method as D.
-
-
