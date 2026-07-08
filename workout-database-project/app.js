@@ -19,7 +19,7 @@ app.post('/api/exercise', async (req, res, next) => {
         return next(err);
     }
 
-    if (!description || description !== 'string') {
+    if (!description || typeof description !== 'string') {
         const err = new Error('Description (string) is required');
         err.status = 400;
         return next(err);
@@ -31,7 +31,7 @@ app.post('/api/exercise', async (req, res, next) => {
         return next(err);
     }
 
-    if (!tag || tag !== 'string') {
+    if (!tag || typeof tag !== 'string') {
         const err = new Error('A tag (string) is required');
         err.status = 400;
         return next(err);
@@ -52,18 +52,53 @@ app.post('/api/exercise', async (req, res, next) => {
 });
 
 app.get('/api/exercise', async (req, res, next) => {
-    try {
-        const [rows] = await pool.query("SELECT * FROM exercise");
+    if (req.query.tag) {
+        try {
+            const tag = req.query.tag;
 
-        if (rows.length === 0) {
-            res.status(200).send([])
+            if (!tag || typeof tag !== 'string') {
+                const error = new Error('Tag (string) is required');
+                error.status = 400;
+                return next(error);
+
+            }
+            const [rows] = await pool.query("SELECT * FROM exercise WHERE tag = ?", [tag]);
+            if (rows.length === 0) {
+                return res.status(200).send([]);
+            }
+            
+            res.status(200).send(rows);
+        }catch (err) {
+            next(err)
+        }
+    }
+    else {
+
+        try {
+            const [rows] = await pool.query("SELECT * FROM exercise");
+
+            if (rows.length === 0) {
+                return res.status(200).send([])
+            }
+
+            res.status(200).send(rows)
+        } catch (err) {
+            next(err);
         }
 
-        res.status(200).send(rows)
-    } catch (err) {
-        next(err);
     }
-})
+});
+
+app.get('/api/exercise/:id', async (req, res) => {
+    const id = req.params.id;
+    const [rows] = await pool.query("SELECT * FROM exercise WHERE id = ?", [id]);
+    
+    if (rows.length === 0) {
+        return res.status(200).send([])
+    }
+
+    res.status(200).send(rows)
+});
 
 app.use(errorHandler);
 
