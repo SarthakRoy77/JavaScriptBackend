@@ -57,9 +57,9 @@ app.get('/api/exercise', async (req, res, next) => {
             const tag = req.query.tag;
 
             if (!tag || typeof tag !== 'string') {
-                const error = new Error('Tag (string) is required');
-                error.status = 400;
-                return next(error);
+                const err = new Error('Tag (string) is required');
+                err.status = 400;
+                return next(err);
 
             }
             const [rows] = await pool.query("SELECT * FROM exercise WHERE tag = ?", [tag]);
@@ -89,16 +89,78 @@ app.get('/api/exercise', async (req, res, next) => {
     }
 });
 
-app.get('/api/exercise/:id', async (req, res) => {
+app.get('/api/exercise/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const [rows] = await pool.query("SELECT * FROM exercise WHERE id = ?", [id]);
+
+        if (rows.length === 0) {
+            const err = new Error("The id you have given is Invalid, there is no data associated with the id");
+            err.status = 404;
+            return next(err);
+        }
+
+        res.status(200).send(rows)
+    } catch (err) {
+        next(err);
+    }
+    });
+
+app.put('/api/exercise/:id', async (req, res, next) => {
     const id = req.params.id;
-    const [rows] = await pool.query("SELECT * FROM exercise WHERE id = ?", [id]);
-    
-    if (rows.length === 0) {
-        return res.status(200).send([])
+    const caloriesBurnt = req.body.calorieBurned;
+    const tag = req.body.tag
+
+    if (!id || isNaN(id)) {
+        const err = new Error('Id (Integer) is required');
+        err.status = 400;
+        return next(err);
     }
 
-    res.status(200).send(rows)
+    if (!caloriesBurnt || isNaN(caloriesBurnt)) {
+        const err = new Error('Amount of Calories Burnt (integer) is required');
+        err.status = 400;
+        return next(err);
+    }
+
+    if (!tag || typeof tag !== 'string') {
+        const err = new Error('A tag (string) is required');
+        err.status = 400;
+        return next(err);
+    }
+
+    try {
+        await pool.query("UPDATE exercise SET caloriesBurnt = ?, tag = ? WHERE id = ? ", [caloriesBurnt, tag, id]);
+        const [rows] = await pool.query("SELECT * FROM exercise WHERE id = ?", [id]);
+
+        res.status(200).send(rows);
+
+    } catch (err) {
+        next(err);
+    }
+
 });
+
+app.delete('/api/exercise/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+
+        if (!id || isNaN(id)) {
+            const err = new Error("Id (integer) is required");
+            err.status = 400;
+            return next(err);
+        }
+
+        await pool.query("DELETE FROM exercise WHERE id = ?", [id]);
+        const [rows] = await pool.query("SELECT * FROM exercise");
+
+        res.status(200).send({msg : `The data associated with the id ${id} has been successfully deleted, the updated data is ${rows}`});
+    } catch (err) {
+        next(err);
+    }
+})
 
 app.use(errorHandler);
 
