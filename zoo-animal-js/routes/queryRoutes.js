@@ -4,14 +4,17 @@ const pool = require("../pool.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const errorHandler = require("../middleware/errorHandler.js");
+const verifyToken = require('../middleware/verifyToken.js');
+
 require("dotenv").config({quiet: true});
 
 async function getUser(id) {
     const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
     return rows[0];
-};
+}
 
 // Login and Logout Routes
+
 router.post("/login/:id", async (req, res, next) => {
     try {
         const user = await getUser(req.params.id);
@@ -52,7 +55,6 @@ router.post("/login/:id", async (req, res, next) => {
         next(err);
     }
 });
-
 router.post('/logout', (req, res, next) => {
     if (!req.cookies.token) {
         const err = new Error("First Login to continue to logout");
@@ -83,25 +85,25 @@ router.post("/register", async (req, res, next) => {
         if (!username) {
             const err = new Error("Please enter the username (string) ")
             err.status = 400;
-            next(err);
+            return next(err);
         }
 
         if (!role) {
             const err = new Error("Please enter the role (string) ")
             err.status = 400;
-            next(err);
+            return next(err);
         }
 
         if (!dept) {
             const err = new Error("Please enter the department (string) ")
             err.status = 400;
-            next(err);
+            return next(err);
         }
 
         if (!clear) {
             const err = new Error("Please enter the clearance level (Integer)")
             err.status = 400;
-            next(err);
+            return next(err);
         }
 
         if (!password) {
@@ -118,26 +120,78 @@ router.post("/register", async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-})
-//Add Verify Token Middleware
-const verifyToken = (req, res, next) => {
-    if (!req.cookies.token) {
-        const err = new Error("Please login to access this route!");
-        err.status = 403;
+});
+//Add CreateAnimal route
+router.post("/addAnimal", verifyToken, async (req, res, next) => {
+    if (req.verifiedData.role.toLowerCase() !== "admin") {
+        const err = new Error("You need to be a admin to access this route");
+        err.status = 400;
         return next(err);
     }
-    try {
-        req.verifiedData = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY);
 
-        if (!req.verifiedData) {
-            const err = new Error("Sorry, We have a trouble authorizing! Please login correctly");
-            err.status = 403;
+    try {
+        const animalName = req.body["animalName"];
+        const scientificName = req.body["scienceName"];
+        const origin = req.body["origin"];
+
+        if (!animalName) {
+            const err = new Error("Please enter the name of the animal");
+            err.status = 400;
             return next(err);
         }
+
+        if (!scientificName) {
+            const err = new Error("Please enter the scientific name of the animal");
+            err.status = 400;
+            return next(err);
+        }
+
+        if (!origin) {
+            const err = new Error("Please enter the origin of the animal");
+            err.status = 400;
+            return next(err);
+        }
+
+        const [results] = await pool.query("INSERT INTO animals(name, scienceNamee, origin) VALUES (?,?,?)", [animalName, scientificName, origin]);
+        const [rows] = await pool.query("SELECT * FROM animals WHERE id = ?", [results.insertId]);
+
+        res.status(201).send({
+            success: true,
+            result: rows,
+            message: `Animal added successfully with the id of ${results.insertId}`
+        });
+
     } catch (err) {
         next(err);
     }
-}
+});
+
+router.get('/getAnimal/:id', verifyToken, async (req, res, next) => {
+    if (req.verifiedData.clear <= 2) {
+        const err = new Error("You need a higher clearance level to access this route");
+        err.status = 400;
+        return next(err);
+    }
+    if (!parseInt(req.params.id)) {
+        const err = new Error("Please enter the id of the animal");
+        err.status = 400;
+        return next(err);
+    }
+
+    try {
+        const id = parseInt(req.params.id);
+
+        const [rows] = await pool.query("SELECT * FROM animals WHERE id = ?", [id]);
+
+        res.status(201).send({
+            success: true,
+            result: rows[0]
+        });
+
+    } catch (err) {
+        next(err);
+    }
+})
 
 router.use(errorHandler);
 module.exports = router;
