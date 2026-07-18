@@ -117,6 +117,7 @@ router.put('/putAnimal/:id', verifyToken, async (req, res, next) => {
         err.status = 403;
         return next(err);
     }
+
     if (!parseInt(req.params.id)) {
         const err = new Error("Please enter a valid id")
         err.status = 400;
@@ -154,6 +155,40 @@ router.put('/putAnimal/:id', verifyToken, async (req, res, next) => {
             result: rows[0]
         });
 
+    } catch (err) {
+        next(err);
+    }
+});
+
+//Add Delete route
+router.delete('/deleteAnimal/:id', verifyToken, async (req, res, next) => {
+    if (!req.verifiedData.clear >= 5) {
+        const err = new Error("Your clearance level needs to be higher than 5 to access this route");
+        err.status = 403;
+        return next(err);
+    }
+
+    if (req.verifiedData.role.toLowerCase() !== "admin") {
+        const err = new Error("You need to be a admin to access this route");
+        err.status = 403;
+        return next(err);
+    }
+
+    if (!parseInt(req.params.id)) {
+        const err = new Error("Please enter a valid id");
+        err.status = 400;
+        return next(err);
+    }
+
+    try {
+        await pool.query("DELETE FROM animals WHERE id = ?", [parseInt(req.params.id)]);
+        const [rows] = await pool.query("SELECT * FROM animals");
+
+        res.status(200).send({
+            success: true,
+            result: rows,
+            message: `The animal with the id of ${parseInt(req.params.id)} has been deleted successfully from the database`
+        })
     } catch (err) {
         next(err);
     }
