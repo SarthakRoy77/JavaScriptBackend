@@ -4,8 +4,11 @@ const pool = require("../pool.js");
 const errorHandler = require("../middleware/errorHandler.js");
 const verifyToken = require('../middleware/verifyToken.js');
 
+//Invoke middleware
+router.use(verifyToken);
+
 //Add CreateAnimal route
-router.post("/addAnimal", verifyToken, async (req, res, next) => {
+router.post("/addAnimal", async (req, res, next) => {
     if (req.verifiedData.role.toLowerCase() !== "admin") {
         const err = new Error("You need to be a admin to access this route");
         err.status = 400;
@@ -50,7 +53,7 @@ router.post("/addAnimal", verifyToken, async (req, res, next) => {
 });
 
 // Add Retrieve Animal by ID route
-router.get('/getAnimal/:id', verifyToken, async (req, res, next) => {
+router.get('/getAnimal/:id', async (req, res, next) => {
     if (req.verifiedData.clear <= 2) {
         const err = new Error("Your clearance level needs to be higher than 2 to access this route");
         err.status = 400;
@@ -84,7 +87,7 @@ router.get('/getAnimal/:id', verifyToken, async (req, res, next) => {
 });
 
 //Add getALl animals route
-router.get('/getAnimal', verifyToken, async (req, res, next) => {
+router.get('/getAnimal', async (req, res, next) => {
     if (req.verifiedData.clear <= 2) {
         const err = new Error("Your clearance level needs to be higher than 2 to access this route");
         err.status = 403;
@@ -111,7 +114,7 @@ router.get('/getAnimal', verifyToken, async (req, res, next) => {
 });
 
 //Add PUT route
-router.put('/putAnimal/:id', verifyToken, async (req, res, next) => {
+router.put('/putAnimal/:id', async (req, res, next) => {
     if (req.verifiedData.role.toLowerCase() !== "admin") {
         const err = new Error("You need to be a admin to access this route");
         err.status = 403;
@@ -161,7 +164,7 @@ router.put('/putAnimal/:id', verifyToken, async (req, res, next) => {
 });
 
 //Add Delete route
-router.delete('/deleteAnimal/:id', verifyToken, async (req, res, next) => {
+router.delete('/deleteAnimal/:id', async (req, res, next) => {
     if (!req.verifiedData.clear >= 5) {
         const err = new Error("Your clearance level needs to be higher than 5 to access this route");
         err.status = 403;
