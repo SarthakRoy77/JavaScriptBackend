@@ -54,13 +54,13 @@ router.post("/login/:id", async (req, res, next) => {
     }
 });
 router.post('/logout', (req, res, next) => {
-    if (!req.cookies.token) {
-        const err = new Error("First Login to continue to logout");
-        err.status = 400;
-        return next(err);
-    }
-
     try {
+        if (!req.cookies.token) {
+            const err = new Error("First Login to continue to logout");
+            err.status = 400;
+            return next(err);
+        }
+
         res.clearCookie("token");
         res.status(200).send({
             success: true,

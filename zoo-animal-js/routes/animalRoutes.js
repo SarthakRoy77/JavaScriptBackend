@@ -9,13 +9,13 @@ router.use(verifyToken);
 
 //Add CreateAnimal route
 router.post("/addAnimal", async (req, res, next) => {
-    if (req.verifiedData.role.toLowerCase() !== "admin") {
-        const err = new Error("You need to be a admin to access this route");
-        err.status = 400;
-        return next(err);
-    }
-
     try {
+        if (req.verifiedData.role.toLowerCase() !== "admin") {
+            const err = new Error("You need to be a admin to access this route");
+            err.status = 400;
+            return next(err);
+        }
+
         const animalName = req.body["animalName"];
         const scientificName = req.body["scienceName"];
         const origin = req.body["origin"];
@@ -54,18 +54,18 @@ router.post("/addAnimal", async (req, res, next) => {
 
 // Add Retrieve Animal by ID route
 router.get('/getAnimal/:id', async (req, res, next) => {
-    if (req.verifiedData.clear <= 2) {
-        const err = new Error("Your clearance level needs to be higher than 2 to access this route");
-        err.status = 400;
-        return next(err);
-    }
-    if (!parseInt(req.params.id)) {
-        const err = new Error("Please enter the id of the animal");
-        err.status = 400;
-        return next(err);
-    }
-
     try {
+        if (req.verifiedData.clear <= 2) {
+            const err = new Error("Your clearance level needs to be higher than 2 to access this route");
+            err.status = 400;
+            return next(err);
+        }
+        if (!parseInt(req.params.id)) {
+            const err = new Error("Please enter the id of the animal");
+            err.status = 400;
+            return next(err);
+        }
+
         const id = parseInt(req.params.id);
 
         const [rows] = await pool.query("SELECT * FROM animals WHERE id = ?", [id]);
@@ -88,13 +88,13 @@ router.get('/getAnimal/:id', async (req, res, next) => {
 
 //Add getALl animals route
 router.get('/getAnimal', async (req, res, next) => {
-    if (req.verifiedData.clear <= 2) {
-        const err = new Error("Your clearance level needs to be higher than 2 to access this route");
-        err.status = 403;
-        return next(err);
-    }
-
     try {
+        if (req.verifiedData.clear <= 2) {
+            const err = new Error("Your clearance level needs to be higher than 2 to access this route");
+            err.status = 403;
+            return next(err);
+        }
+
         const [rows] = await pool.query("SELECT * FROM animals");
 
         if (!rows || rows.length === 0) {
@@ -115,19 +115,19 @@ router.get('/getAnimal', async (req, res, next) => {
 
 //Add PUT route
 router.put('/putAnimal/:id', async (req, res, next) => {
-    if (req.verifiedData.role.toLowerCase() !== "admin") {
-        const err = new Error("You need to be a admin to access this route");
-        err.status = 403;
-        return next(err);
-    }
-
-    if (!parseInt(req.params.id)) {
-        const err = new Error("Please enter a valid id")
-        err.status = 400;
-        return next(err);
-    }
-
     try {
+        if (req.verifiedData.role.toLowerCase() !== "admin") {
+            const err = new Error("You need to be a admin to access this route");
+            err.status = 403;
+            return next(err);
+        }
+
+        if (!parseInt(req.params.id)) {
+            const err = new Error("Please enter a valid id")
+            err.status = 400;
+            return next(err);
+        }
+
         const name = req.body["animalName"];
         const scienceName = req.body["scienceName"];
         const origin = req.body["origin"];
@@ -165,25 +165,25 @@ router.put('/putAnimal/:id', async (req, res, next) => {
 
 //Add Delete route
 router.delete('/deleteAnimal/:id', async (req, res, next) => {
-    if (!req.verifiedData.clear >= 5) {
-        const err = new Error("Your clearance level needs to be higher than 5 to access this route");
-        err.status = 403;
-        return next(err);
-    }
-
-    if (req.verifiedData.role.toLowerCase() !== "admin") {
-        const err = new Error("You need to be a admin to access this route");
-        err.status = 403;
-        return next(err);
-    }
-
-    if (!parseInt(req.params.id)) {
-        const err = new Error("Please enter a valid id");
-        err.status = 400;
-        return next(err);
-    }
-
     try {
+        if (req.verifiedData.clear <= 5) {
+            const err = new Error("Your clearance level needs to be higher than 5 to access this route");
+            err.status = 403;
+            return next(err);
+        }
+
+        if (req.verifiedData.role.toLowerCase() !== "admin") {
+            const err = new Error("You need to be a admin to access this route");
+            err.status = 403;
+            return next(err);
+        }
+
+        if (!parseInt(req.params.id)) {
+            const err = new Error("Please enter a valid id");
+            err.status = 400;
+            return next(err);
+        }
+
         await pool.query("DELETE FROM animals WHERE id = ?", [parseInt(req.params.id)]);
         const [rows] = await pool.query("SELECT * FROM animals");
 
